@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with Google Authentication credentials and QA role",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "description": "User email address" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "photoURL": { "type": "string", "description": "User profile photo URL" },
+        "role": { "type": "string", "enum": ["qa_engineer", "qa_lead", "auditor"], "description": "QA access role" },
+        "createdAt": { "type": "string", "description": "Account creation timestamp" },
+        "lastLoginAt": { "type": "string", "description": "Last sign in timestamp" }
+      },
+      "required": ["uid", "email", "createdAt"]
+    },
+    "TestRun": {
+      "title": "TestRun",
+      "description": "Autonomous QA test execution run metadata and results",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Run unique ID" },
+        "userId": { "type": "string", "description": "UID of QA engineer who launched run" },
+        "timestamp": { "type": "string", "description": "Run execution start timestamp" },
+        "targetUrl": { "type": "string", "description": "Tested web app URL" },
+        "totalTests": { "type": "number", "description": "Total test cases executed" },
+        "passedCount": { "type": "number", "description": "Passed tests count" },
+        "failedCount": { "type": "number", "description": "Failed tests count" },
+        "bugsFoundCount": { "type": "number", "description": "Total verified bugs found" },
+        "durationMs": { "type": "number", "description": "Total duration in milliseconds" },
+        "coveragePercentage": { "type": "number", "description": "Calculated test coverage percentage" },
+        "criticalBugsFound": { "type": "number", "description": "Count of critical severity defects" }
+      },
+      "required": ["id", "userId", "timestamp", "targetUrl", "totalTests"]
+    },
+    "BugReportItem": {
+      "title": "BugReportItem",
+      "description": "Verified reproducible bug report with Playwright video clip evidence",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique bug report identifier" },
+        "userId": { "type": "string", "description": "UID of QA engineer who verified defect" },
+        "testCaseId": { "type": "string", "description": "Associated test case ID" },
+        "title": { "type": "string", "description": "Defect title" },
+        "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"], "description": "Defect severity" },
+        "category": { "type": "string", "description": "Defect category" },
+        "summary": { "type": "string", "description": "Summary description" },
+        "expectedBehavior": { "type": "string", "description": "Expected behavior" },
+        "actualBehavior": { "type": "string", "description": "Actual observed behavior" },
+        "rootCauseAnalysis": { "type": "string", "description": "AI root cause analysis" },
+        "suggestedFix": { "type": "string", "description": "Suggested code fix" },
+        "verificationRuns": { "type": "number", "description": "Number of reproduction re-runs" },
+        "confidenceScore": { "type": "number", "description": "Defect confidence score" },
+        "status": { "type": "string", "enum": ["OPEN", "VERIFIED", "CONFIRMED", "RESOLVED"], "description": "Defect status" },
+        "timestamp": { "type": "string", "description": "Discovery timestamp" }
+      },
+      "required": ["id", "userId", "title", "severity", "category", "expectedBehavior", "actualBehavior"]
+    },
+    "TestSuite": {
+      "title": "TestSuite",
+      "description": "Exported Playwright test suite file",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique suite ID" },
+        "userId": { "type": "string", "description": "Owner UID" },
+        "filename": { "type": "string", "description": "Spec filename" },
+        "targetUrl": { "type": "string", "description": "Target application URL" },
+        "code": { "type": "string", "description": "Playwright TypeScript code" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "userId", "filename", "code", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document indexed by Auth UID"
+    },
+    "/test_runs/{runId}": {
+      "schema": "TestRun",
+      "description": "Autonomous test runs"
+    },
+    "/bug_reports/{bugId}": {
+      "schema": "BugReportItem",
+      "description": "Verified bugs with evidence and Playwright video metadata"
+    },
+    "/test_suites/{suiteId}": {
+      "schema": "TestSuite",
+      "description": "Exported Playwright test suites"
+    }
+  }
+}
